@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Vales de San Valentín</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=Great+Vibes&family=Playfair+Display:wght@500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="orbiting-hearts" id="orbitingHearts" aria-hidden="true"></div>
+  <div class="floating-hearts" id="floatingHearts" aria-hidden="true"></div>
+
+  <main class="page">
+    <header>
+      <h1>Vales de San Valentín</h1>
+      <p class="intro">te mereces esto y mas</p>
+      <p class="subtitle">Rasca cada cupón para descubrirlo</p>
+    </header>
+
+    <section class="grid" id="couponGrid" aria-live="polite"></section>
+
+  </main>
+
+  <div class="modal" id="couponModal" aria-hidden="true" role="dialog" aria-modal="true">
+    <div class="modal-card" role="document">
+      <button class="modal-close" id="modalClose" type="button" aria-label="Cerrar">&times;</button>
+      <div class="modal-body" id="modalBody">
+        <div class="modal-content">
+          <div class="modal-emoji" id="modalEmoji" aria-hidden="true"></div>
+          <p class="modal-text" id="modalText"></p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="app.js"></script>
+</body>
+</html>

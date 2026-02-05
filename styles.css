@@ -1,0 +1,438 @@
+:root {
+  --bg-1: #fff1f4;
+  --bg-2: #f5e7df;
+  --bg-3: #f9f3ee;
+  --card: #ffffff;
+  --card-edge: rgba(212, 170, 178, 0.5);
+  --accent: #c05b74;
+  --accent-strong: #9f3f56;
+  --text: #2f282a;
+  --muted: #6b5b61;
+  --shadow: 0 24px 55px rgba(156, 107, 120, 0.22);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  font-family: "Cormorant Garamond", serif;
+  color: var(--text);
+  background:
+    radial-gradient(1200px 800px at 10% 10%, rgba(255, 220, 228, 0.95), transparent 60%),
+    radial-gradient(900px 700px at 90% 20%, rgba(243, 227, 205, 0.8), transparent 55%),
+    linear-gradient(160deg, var(--bg-1), var(--bg-2) 55%, var(--bg-3) 100%);
+  display: flex;
+  justify-content: center;
+  padding: 52px 20px 72px;
+  position: relative;
+  overflow-x: hidden;
+}
+
+.orbiting-hearts,
+.floating-hearts {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.orbiting-hearts {
+  z-index: 0;
+  opacity: 0.4;
+  filter: blur(0.2px);
+}
+
+.orbit-heart {
+  position: absolute;
+  left: var(--center-x, 50%);
+  top: var(--center-y, 50%);
+  width: 1px;
+  height: 1px;
+  animation: orbit var(--duration, 40s) linear infinite;
+  animation-delay: var(--delay, 0s);
+}
+
+.orbit-heart::before {
+  content: "❤";
+  position: absolute;
+  transform: rotate(var(--angle, 0deg)) translateX(var(--radius, 160px));
+  font-size: var(--size, 16px);
+  color: var(--color, rgba(196, 106, 123, 0.2));
+  opacity: 0.9;
+}
+
+.floating-hearts {
+  z-index: 18;
+}
+
+.floating-heart {
+  position: absolute;
+  bottom: -18vh;
+  animation: floatUp var(--duration, 7s) ease-in forwards;
+  animation-delay: var(--delay, 0s);
+  transform: translateX(0) translateY(0) scale(0.9);
+  opacity: 0;
+  font-size: var(--size, 24px);
+  color: var(--color, #d33b4f);
+  text-shadow: 0 10px 28px rgba(0, 0, 0, 0.2);
+}
+
+.page {
+  width: min(1200px, 100%);
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+  position: relative;
+  z-index: 5;
+}
+
+header {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+h1 {
+  margin: 0;
+  font-family: "Playfair Display", serif;
+  font-weight: 600;
+  font-size: clamp(2.4rem, 3vw, 3.8rem);
+  color: var(--text);
+  letter-spacing: 0.6px;
+}
+
+.subtitle {
+  margin: 0;
+  font-family: "Great Vibes", cursive;
+  font-size: clamp(1.6rem, 2vw, 2.4rem);
+  color: var(--accent);
+  letter-spacing: 0.6px;
+}
+
+.intro {
+  margin: 0;
+  font-size: 0.95rem;
+  color: rgba(107, 91, 97, 0.8);
+  letter-spacing: 0.4px;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 22px;
+}
+
+.coupon-card {
+  position: relative;
+  padding: 28px 22px 28px;
+  min-height: 150px;
+  background: linear-gradient(145deg, #ffffff 0%, #fff6f7 70%, #fff2f4 100%);
+  border-radius: 22px;
+  border: 1px solid var(--card-edge);
+  box-shadow: var(--shadow);
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  cursor: pointer;
+  transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+  font-family: "Cormorant Garamond", serif;
+  width: 100%;
+  appearance: none;
+  -webkit-appearance: none;
+  background-clip: padding-box;
+  border-style: solid;
+}
+
+.coupon-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 32px 70px rgba(156, 107, 120, 0.28);
+}
+
+.coupon-card::after {
+  content: "";
+  position: absolute;
+  inset: 14px;
+  border-radius: 18px;
+  border: 1px dashed rgba(196, 106, 123, 0.32);
+  pointer-events: none;
+}
+
+.coupon-card.locked::after {
+  opacity: 0;
+}
+
+.coupon-text {
+  margin: 0;
+  font-size: 1.18rem;
+  font-weight: 400;
+  font-style: italic;
+  font-family: "Great Vibes", cursive;
+  color: var(--text);
+  line-height: 1.45;
+  transition: opacity 0.3s ease, filter 0.3s ease;
+  position: relative;
+  z-index: 1;
+}
+
+.coupon-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  position: relative;
+  z-index: 1;
+  transition: opacity 0.3s ease;
+}
+
+.coupon-emoji {
+  font-size: 1.7rem;
+  line-height: 1;
+  font-style: normal;
+  font-family: "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", sans-serif;
+}
+
+.coupon-card.locked .coupon-content {
+  opacity: 0;
+}
+
+.card-scratch {
+  position: absolute;
+  inset: 0;
+  border-radius: 22px;
+  background:
+    linear-gradient(135deg, #f2f2f2 0%, #c7c7c7 48%, #f7f7f7 100%),
+    repeating-linear-gradient(45deg, rgba(255, 255, 255, 0.28) 0 8px, rgba(255, 255, 255, 0) 8px 16px);
+  opacity: 0.92;
+  transition: opacity 0.35s ease;
+  pointer-events: none;
+}
+
+.card-scratch::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.3), transparent 55%);
+  opacity: 0.6;
+}
+
+.coupon-card.revealed {
+  border-color: rgba(192, 91, 116, 0.75);
+  box-shadow: 0 26px 50px rgba(156, 107, 120, 0.22);
+}
+
+.coupon-card.revealed::after {
+  border-color: rgba(192, 91, 116, 0.5);
+}
+
+.coupon-card.revealed .card-scratch {
+  opacity: 0;
+}
+
+.modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(20, 10, 12, 0.65);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s ease, visibility 0.3s ease;
+  z-index: 30;
+  backdrop-filter: blur(6px);
+}
+
+.modal.show {
+  opacity: 1;
+  visibility: visible;
+}
+
+.modal-card {
+  position: relative;
+  width: min(580px, 100%);
+  background: linear-gradient(160deg, #ffffff 0%, #fff4f6 65%, #fdeff1 100%);
+  border-radius: 28px;
+  border: 1px solid rgba(192, 91, 116, 0.4);
+  box-shadow: 0 30px 70px rgba(0, 0, 0, 0.25);
+  padding: 34px 28px 34px;
+  text-align: center;
+}
+
+.modal-body {
+  position: relative;
+  min-height: 240px;
+  height: clamp(240px, 40vh, 340px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 22px;
+  background: rgba(255, 255, 255, 0.7);
+  border: 1px solid rgba(192, 91, 116, 0.25);
+  overflow: hidden;
+}
+
+.modal-content {
+  position: relative;
+  z-index: 1;
+  padding: 24px 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+.modal-emoji {
+  font-size: 2.6rem;
+  line-height: 1;
+  font-style: normal;
+  font-family: "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", sans-serif;
+}
+
+.modal-text {
+  margin: 0;
+  font-size: clamp(1.35rem, 2.5vw, 1.8rem);
+  color: var(--text);
+  line-height: 1.5;
+  font-style: italic;
+  font-weight: 400;
+  font-family: "Great Vibes", cursive;
+}
+
+.modal-close {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  border: none;
+  background: rgba(255, 255, 255, 0.8);
+  color: var(--accent-strong);
+  font-size: 1.2rem;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  cursor: pointer;
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.12);
+  transition: transform 0.2s ease, background 0.2s ease;
+}
+
+.modal-close:hover {
+  transform: scale(1.05);
+  background: #ffffff;
+}
+
+.scratch-layer {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: 20px;
+  cursor: pointer;
+  touch-action: none;
+  transition: opacity 0.5s ease;
+  z-index: 2;
+}
+
+.scratch-layer.fade-out {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.footer-note {
+  text-align: center;
+  font-size: 1rem;
+  color: rgba(109, 96, 101, 0.75);
+  font-family: "Cormorant Garamond", serif;
+  letter-spacing: 0.4px;
+}
+
+body.modal-open {
+  overflow: hidden;
+}
+
+@keyframes orbit {
+  from {
+    transform: translate(-50%, -50%) rotate(0deg);
+  }
+  to {
+    transform: translate(-50%, -50%) rotate(360deg);
+  }
+}
+
+@keyframes floatUp {
+  0% {
+    opacity: 0;
+    transform: translateX(0) translateY(0) scale(0.9);
+  }
+  12% {
+    opacity: 0.95;
+  }
+  100% {
+    opacity: 0;
+    transform: translateX(var(--drift, 20px)) translateY(-140vh) scale(1.35);
+  }
+}
+
+@media (max-width: 640px) {
+  body {
+    padding: 36px 16px 52px;
+  }
+
+  .coupon-card {
+    min-height: 140px;
+    padding: 24px 18px;
+  }
+
+  .coupon-text {
+    font-size: 1.15rem;
+  }
+
+  .coupon-emoji {
+    font-size: 1.5rem;
+  }
+
+  .grid {
+    gap: 16px;
+  }
+
+  h1 {
+    font-size: clamp(2rem, 7vw, 2.6rem);
+  }
+
+  .subtitle {
+    font-size: clamp(1.4rem, 6vw, 2rem);
+  }
+
+  .modal-card {
+    padding: 28px 22px 30px;
+  }
+
+  .modal-body {
+    height: clamp(220px, 45vh, 300px);
+  }
+
+  .modal-text {
+    font-size: clamp(1.3rem, 5.5vw, 1.7rem);
+  }
+
+  .modal-emoji {
+    font-size: 2.2rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .coupon-card:hover {
+    transform: none;
+  }
+
+  .orbit-heart,
+  .floating-heart {
+    animation: none;
+  }
+}
