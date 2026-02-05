@@ -68,7 +68,6 @@
     modalBody: document.getElementById("modalBody"),
     modalText: document.getElementById("modalText"),
     modalEmoji: document.getElementById("modalEmoji"),
-    modalClose: document.getElementById("modalClose"),
     orbitingHearts: document.getElementById("orbitingHearts"),
     floatingHearts: document.getElementById("floatingHearts")
   };
@@ -376,12 +375,11 @@
   }
 
   class ModalController {
-    constructor(modal, modalBody, modalText, modalEmoji, closeButton) {
+    constructor(modal, modalBody, modalText, modalEmoji) {
       this.modal = modal;
       this.modalBody = modalBody;
       this.modalText = modalText;
       this.modalEmoji = modalEmoji;
-      this.closeButton = closeButton;
       this.scratch = null;
       this.onReveal = null;
 
@@ -397,7 +395,6 @@
     }
 
     bindEvents() {
-      this.closeButton.addEventListener("click", () => this.close());
       this.modal.addEventListener("click", this.handleBackdropClick);
       window.addEventListener("keydown", this.handleEscape);
     }
@@ -414,12 +411,21 @@
       }
     }
 
+    showContent() {
+      this.modal.classList.add("content-visible");
+    }
+
+    hideContent() {
+      this.modal.classList.remove("content-visible");
+    }
+
     open({ id, text, emoji, revealed, onReveal }) {
       this.modalText.textContent = text;
       if (this.modalEmoji) {
         this.modalEmoji.textContent = emoji || "";
       }
       this.onReveal = onReveal;
+      this.hideContent();
       this.modal.classList.add("show");
       this.modal.setAttribute("aria-hidden", "false");
       document.body.classList.add("modal-open");
@@ -427,11 +433,17 @@
       this.clearScratch();
 
       if (!revealed) {
+        this.modal.classList.add("locked");
+        this.modalBody.classList.add("scratch-active");
         requestAnimationFrame(() => {
           requestAnimationFrame(() => {
             this.createScratchCanvas(id);
           });
         });
+      } else {
+        this.modal.classList.remove("locked");
+        this.modalBody.classList.remove("scratch-active");
+        requestAnimationFrame(() => this.showContent());
       }
     }
 
@@ -441,6 +453,9 @@
       this.modalBody.appendChild(canvas);
 
       this.scratch = new ScratchSurface(canvas, () => {
+        this.modal.classList.remove("locked");
+        this.modalBody.classList.remove("scratch-active");
+        this.showContent();
         if (typeof this.onReveal === "function") {
           this.onReveal(id);
         }
@@ -451,6 +466,12 @@
       if (this.resizeObserver) {
         this.resizeObserver.observe(this.modalBody);
       }
+
+      requestAnimationFrame(() => {
+        this.modal.classList.remove("locked");
+        this.showContent();
+      });
+
     }
 
     resizeScratch() {
@@ -467,14 +488,21 @@
         this.scratch.destroy();
         this.scratch = null;
       }
+      this.modalBody.classList.remove("scratch-active");
     }
 
     close() {
+      this.hideContent();
       this.modal.classList.remove("show");
       this.modal.setAttribute("aria-hidden", "true");
       document.body.classList.remove("modal-open");
       this.onReveal = null;
-      this.clearScratch();
+      this.modal.classList.add("locked");
+      const cleanupDelay = 320;
+      window.setTimeout(() => {
+        this.clearScratch();
+        this.modal.classList.remove("locked");
+      }, cleanupDelay);
     }
   }
 
@@ -482,8 +510,7 @@
     dom.modal,
     dom.modalBody,
     dom.modalText,
-    dom.modalEmoji,
-    dom.modalClose
+    dom.modalEmoji
   );
 
   const updateCardAppearance = (id) => {
